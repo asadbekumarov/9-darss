@@ -9,23 +9,30 @@ function groupdetail() {
     const {groupID}  = useParams();
     console.log(groupID);
     const [group,setGroup] = useState(null);
-    useEffect(()=>{
-      (async function(){
-        let response = await axios.get("https://nt-shopping-list.onrender.com/api/groups",
-          {
+    useEffect(() => {
+      (async function() {
+        try {
+          let response = await axios.get("https://nt-shopping-list.onrender.com/api/groups", {
             headers: {
-              "x-auth-token": ` ${localStorage.getItem("token")}`,
+              "x-auth-token": `${localStorage.getItem("token")}`,
             },
-          }
-        );
-        
-
-        let resgroup =response.data.find((val)=>val._id===groupID)
-        setGroup(resgroup)
-      })()
-    },[])
-    console.log(groupID);
+          });
+          console.log("API Response:", response.data);
     
+          let resgroup = response.data.find((val) => val._id === groupID);
+          if (resgroup) {
+            setGroup(resgroup);
+          } else {
+            console.error("Group not found for ID:", groupID);
+          }
+        } catch (error) {
+          console.error("Error fetching groups:", error);
+        }
+      })();
+    }, [groupID]);
+    
+    console.log(groupID);
+
   return (
     <div>
        <Box
@@ -65,6 +72,8 @@ function groupdetail() {
 }
 
 export default groupdetail
+
+
 
 
 
