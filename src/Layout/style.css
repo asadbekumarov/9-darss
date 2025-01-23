@@ -5,4 +5,5 @@
 }
 .main_wrapper{
     max-width: 200px;
+    display: flex;
 }

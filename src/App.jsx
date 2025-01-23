@@ -11,6 +11,7 @@ function App() {
     <div>
       <Routes>
         <Route path="/" element={<Navigate to="/login" />} />
+        
         <Route path="/main" element={<MainLayout />}>
           <Route path="/main/groups/:groupID" element={<GroupDetail />} />
           <Route path="/main/profile" element={<Profile />} />
