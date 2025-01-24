@@ -1,4 +1,2 @@
-.error{
-    color: red;
-    font-size: 0.9rem;
-}
+@tailwind preflight;
+@tailwind utilities;

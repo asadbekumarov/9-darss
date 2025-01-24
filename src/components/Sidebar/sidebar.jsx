@@ -3,6 +3,7 @@ import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import "./style.css";
+import { IoPerson } from "react-icons/io5";
 
 function sidebar() {
   const [groups, setGroups] = useState([]);
@@ -58,6 +59,7 @@ function sidebar() {
     <div className="sidebar-container">
       <div className="sidebar-header">
         <NavLink to={"/main"} className="sidebar-profile-link">
+          <IoPerson className="person" />
           Profile
         </NavLink>
       </div>
@@ -67,7 +69,7 @@ function sidebar() {
           className="create-group-toggle-btn"
           onClick={() => setIsCreating(!isCreating)}
         >
-          {isCreating ? "groups" : "Create Group"}
+          {isCreating ? "Groups" : "+ Create Group"}
         </button>
 
         {isCreating && (
@@ -116,7 +118,3 @@ function sidebar() {
 }
 
 export default sidebar;
-
-
-
-
