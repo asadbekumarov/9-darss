@@ -1,81 +1,125 @@
-import axios from 'axios';
-import React from 'react';
-import { NavLink, useNavigate, Navigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import './style.css'; 
+import React from "react";
+import Logo from "../../assets/img/logo.png";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useFormik } from "formik";
 import * as Yup from "yup";
-import { Formik, Form, Field } from 'formik';
-import { ErrorMessage } from 'formik';
+import './style.css';
+
 
 const validationSchema = Yup.object({
   username: Yup.string()
-    .min(3, "at least 3 characters")
-    .required("username is required")
-    .max(8, "no more than 8 characters"),
+    .min(5, "Kamida 5 ta harf")
+    .max(10, "10 tadan ko'p bo'lmasligi kerak")
+    .required("Nomni to'ldirish shart!"),
   password: Yup.string()
-    .required()
-    .min(6, "at least 6 characters"),
+    .min(5, "Kamida 5 ta belgi")
+    .required("Parolni to'ldirish shart!"),
 });
 
 function Login() {
-  const initialValues = {
-    username: "",
-    password: "",
-  };
   const navigate = useNavigate();
 
-  const onSubmit = async (e) => {
-    console.log(e);
-    
-    try {
-      let { username, password } = e;
+  const formik = useFormik({
+    initialValues: {
+      username: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const res = await axios.post(
+          "https://nt-shopping-list.onrender.com/api/auth",
+          values
+        );
 
-      let response = await axios.post('https://nt-shopping-list.onrender.com/api/auth', {
-        username,
-        password,
-      });
-
-      if (response.status === 200) {
-        localStorage.setItem('token', response.data.token);
-        toast.success('Signed in successfully');
-        navigate('/main');
+        if (res.status === 200) {
+          alert("Login successful!");
+          localStorage.setItem("token", res.data.token);
+          navigate("/AsideCom");
+        } else {
+          alert("Invalid credentials");
+        }
+        navigate("/main/groups/your-group-id");
+      } catch (error) {
+        console.log(error);
+        alert(error.response?.data?.message || "Noma'lum xato yuz berdi!");
+      } finally {
+        setSubmitting(false);
       }
-    } catch (err) {
-      console.log(err);
-      toast.error('Login failed. Please check your credentials.');
-    }
-  };
-
-  if (localStorage.getItem('token')) {
-    return <Navigate to={'/main'} />;
-  }
+    },
+  });
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <h2 className="login-title">Welcome Back!</h2>
+    <div className="section">
+      <div className="section2">
+        <div className="Left-section">
+          <img className="logo" src={Logo} alt="Logo" />
+          <p className="wel">Welcome back to</p>
+          <h1 className="shop">Shopping List</h1>
+        </div>
 
-        <Formik initialValues={initialValues} validationSchema={validationSchema} onSubmit={onSubmit}>
-          {() => (
-            <Form>
-              <div className="input-group">
-                <label htmlFor="username">Username</label>
-                <Field type="text" name="username" className="input-field"/>
-                <ErrorMessage name="username" component="div" className="error"/>
+        <div className="Right-section">
+          <h1 className="sign">
+            Sign In
+          </h1>
+          <form
+            onSubmit={formik.handleSubmit}
+            className="form"
+          >
+            <input
+              name="username"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 ${
+                formik.touched.username && formik.errors.username
+                  ? "border-red-500"
+                  : ""
+              }`}
+              type="text"
+              placeholder="Username"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.username && formik.errors.username && (
+              <div className="text-red-500 text-sm">
+                {formik.errors.username}
               </div>
-              <div className="input-group">
-                <label htmlFor="password">Password</label>
-                <Field type="password" name="password" className="input-field"/>
-                <ErrorMessage name="password" component="div" className="error"/>
-              </div>
-              <button type="submit" className="submit-btn">Submit</button>
-            </Form>
-          )}
-        </Formik>
+            )}
 
-        <div className="login-footer">
-          <p>Don't have an account?</p>
-          <NavLink to={'/register'} className="login-link">Create One</NavLink>
+            <input
+              name="password"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 ${
+                formik.touched.password && formik.errors.password
+                  ? "border-red-500"
+                  : ""
+              }`}
+              type="password"
+              placeholder="Password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.password && formik.errors.password && (
+              <div className="text-red-500 text-sm">
+                {formik.errors.password}
+              </div>
+            )}
+
+            <button
+              type="submit"
+              className="btnl"
+            >
+              Sign In
+            </button>
+          </form>
+          <div className="mt-4 text-start">
+            <p className="no">
+              No account yet?{" "}
+              <NavLink to="/register" className="one">
+                Create One
+              </NavLink>
+            </p>
+          </div>
         </div>
       </div>
     </div>

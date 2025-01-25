@@ -1,95 +1,141 @@
-import axios from 'axios';
-import React from 'react';
-import { NavLink, useNavigate, Navigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import './style.css'; 
-import * as Yup from 'yup';
-import { Formik, Form, Field } from 'formik';
-import { ErrorMessage } from 'formik';
+import React from "react";
+import Logo from "../../assets/img/logo.png";
+import { NavLink, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import "./style.css";
 
 const validationSchema = Yup.object({
   name: Yup.string()
-    .required('fill the field')
-    .min(3, 'name must be at least 3 characters')
-    .max(8, 'max is 8 characters'),
+    .min(3, "Kamida 3 ta harf")
+    .max(15, "15 tadan ko'p bo'lmasligi kerak")
+    .required("Ismni to'ldirish shart!"),
   username: Yup.string()
-    .min(3, 'at least 3 characters')
-    .required('username is required')
-    .max(8, 'no more than 8 characters'),
-  password: Yup.string().required().min(6, 'at least 6 characters'),
+    .min(5, "Kamida 5 ta harf")
+    .max(10, "10 tadan ko'p bo'lmasligi kerak")
+    .required("Nomni to'ldirish shart!"),
+  password: Yup.string()
+    .min(6, "Kamida 6 ta belgi")
+    .required("Parolni to'ldirish shart!"),
 });
 
 function Register() {
   const navigate = useNavigate();
 
-  const onSubmit = async (values) => {
-    try {
-      let response = await axios.post(
-        'https://nt-shopping-list.onrender.com/api/users',
-        {
-          name: values.name,
-          username: values.username,
-          password: values.password,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
+  const formik = useFormik({
+    initialValues: {
+      name: "",
+      username: "",
+      password: "",
+    },
+    validationSchema,
+    onSubmit: async (values, { setSubmitting }) => {
+      try {
+        const res = await axios.post(
+          "https://nt-shopping-list.onrender.com/api/users",
+          values
+        );
+
+        if (res.status === 201) {
+          alert("Account successfully created!");
+          localStorage.setItem("token", res.data.token);
+          navigate("/main");
+        } else {
+          alert("Error while creating account!");
         }
-      );
-
-      if (response.status === 201) {
-        localStorage.setItem('token', response.data.token);
-        toast.success('Signed up successfully');
-        navigate('/main');
+      } catch (error) {
+        console.error(error);
+        alert(error.response?.data?.message || "Noma'lum xato yuz berdi!");
+      } finally {
+        setSubmitting(false);
       }
-    } catch (err) {
-      console.log(err.response?.data || err.message);
-      toast.error(err.response?.data?.message || 'Registration failed');
-    }
-  };
-
-  if (localStorage.getItem('token')) {
-    return <Navigate to={'/main'} />;
-  }
+    },
+  });
 
   return (
-    <div className="register-container">
-      <div className="register-card">
-        <h2 className="register-title">Create an Account</h2>
-        <Formik
-          initialValues={{
-            name: '',
-            username: '',
-            password: '',
-          }}
-          validationSchema={validationSchema}
-          onSubmit={onSubmit}
-        >
-          {() => (
-            <Form>
-              <div className="input-group">
-                <label htmlFor="name">Enter your name</label>
-                <Field id="name" type="text" name="name" className="input-field"/>
-                <ErrorMessage name="name" component="div" className="error"/>
+    <div className="section">
+      <div className="section2">
+        <div className="Left-section">
+          <img className="logo" src={Logo} alt="Logo" />
+          <p className="wel">Welcome to</p>
+          <h1 className="shop">Shopping List</h1>
+        </div>
+
+        <div className="Right-section">
+          <h1 className="sign">Create an Account</h1>
+          <form onSubmit={formik.handleSubmit} className="form">
+            <input
+              name="name"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 ${
+                formik.touched.name && formik.errors.name
+                  ? "border-red-500"
+                  : ""
+              }`}
+              type="text"
+              placeholder="Name"
+              value={formik.values.name}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.name && formik.errors.name && (
+              <div className="text-red-500 text-sm">{formik.errors.name}</div>
+            )}
+
+            <input
+              name="username"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 ${
+                formik.touched.username && formik.errors.username
+                  ? "border-red-500"
+                  : ""
+              }`}
+              type="text"
+              placeholder="Username"
+              value={formik.values.username}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.username && formik.errors.username && (
+              <div className="text-red-500 text-sm">
+                {formik.errors.username}
               </div>
-              <div className="input-group">
-                <label htmlFor="username">Enter your Username</label>
-                <Field id="username" type="text" name="username" className="input-field"/>
-                <ErrorMessage name="username" component="div" className="error"/>
+            )}
+
+            <input
+              name="password"
+              className={`w-full px-4 py-2 border rounded-md focus:outline-none focus:ring focus:ring-blue-300 ${
+                formik.touched.password && formik.errors.password
+                  ? "border-red-500"
+                  : ""
+              }`}
+              type="password"
+              placeholder="Password"
+              value={formik.values.password}
+              onChange={formik.handleChange}
+              onBlur={formik.handleBlur}
+            />
+            {formik.touched.password && formik.errors.password && (
+              <div className="text-red-500 text-sm">
+                {formik.errors.password}
               </div>
-              <div className="input-group">
-                <label htmlFor="password">Enter your Password</label>
-                <Field id="password" type="password" name="password" className="input-field"/>
-                <ErrorMessage name="password" component="div" className="error"/>
-              </div>
-              <button type="submit" className="submit-btn">Sign Up</button>
-            </Form>
-          )}
-        </Formik>
-        <div className="register-footer">
-          <p>Already have an account?</p>
-          <NavLink to={'/login'} className="register-link">Log In</NavLink>
+            )}
+
+            <button
+              type="submit"
+              className="btnl"
+              disabled={formik.isSubmitting}
+            >
+              Sign Up
+            </button>
+          </form>
+          <div className="mt-4 text-start">
+            <p className="no">
+              Already have an account?{" "}
+              <NavLink to="/login" className="one">
+                Log In
+              </NavLink>
+            </p>
+          </div>
         </div>
       </div>
     </div>
