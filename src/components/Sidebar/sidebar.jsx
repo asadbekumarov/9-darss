@@ -79,12 +79,14 @@ function sidebar() {
               placeholder="Group name"
               className="form-input"
               required
+              style={{ color: "black" }}
             />
             <input
               type="password"
               placeholder="Password"
               className="form-input"
               required
+              style={{ color: "black" }}
             />
             <div className="form-actions">
               <button type="submit" className="form-submit-btn">
