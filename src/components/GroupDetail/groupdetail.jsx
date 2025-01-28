@@ -10,7 +10,7 @@ import { SlBasket } from "react-icons/sl";
 function GroupDetail() {
   const { groupID } = useParams();
   const [group, setGroup] = useState(null);
-  const [members, setMembers] = useState([]); // Fix: corrected state variable
+  const [members, setMembers] = useState([]); 
   const [isPending, setIsPending] = useState(false);
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -31,7 +31,7 @@ function GroupDetail() {
         let resGroup = response.data.find((val) => val._id === groupID);
         if (resGroup) {
           setGroup(resGroup);
-          setMembers(resGroup.members); // Assuming group has a members property
+          setMembers(resGroup.members); 
         } else {
           console.error("Group not found for ID:", groupID);
         }
@@ -59,16 +59,16 @@ function GroupDetail() {
           },
         }
       );
-      setItems((prevItems) => [...prevItems, response.data.item]); // Fix: use functional update
+      setItems((prevItems) => [...prevItems, response.data.item]); 
     } catch (error) {
       console.error(error);
     } finally {
-      setIsPending(false); // Ensure isPending is reset
+      setIsPending(false);
     }
   };
 
   const delItem = async (id) => {
-    setIsPending(true); // Set pending state
+    setIsPending(true); 
     try {
       const res = await axios.delete(
         `https://nt-shopping-list.onrender.com/api/items/${id}`,
@@ -80,12 +80,12 @@ function GroupDetail() {
         }
       );
       if (res.status === 200) {
-        setItems((prevItems) => prevItems.filter((val) => val._id !== id)); // Fix: use functional update
+        setItems((prevItems) => prevItems.filter((val) => val._id !== id));
       }
     } catch (error) {
       console.error(error);
     } finally {
-      setIsPending(false); // Ensure isPending is reset
+      setIsPending(false);
     }
   };
 

@@ -147,7 +147,6 @@
   font-size: 0.875rem;
 }
 
-/* Submit button */
 .bg-blue-600 {
   background-color: #2563eb;
 }
@@ -173,7 +172,6 @@
   transition: all 0.2s ease-in-out;
 }
 
-/* Footer */
 .mt-4 {
   margin-top: 1rem;
 }
