@@ -1,8 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
-import { Box, Button, Typography } from "@mui/material";
-import "./style.css";
 import { FiPlus } from "react-icons/fi";
 import { AiOutlineClose } from "react-icons/ai";
 import { SlBasket } from "react-icons/sl";
@@ -10,7 +8,7 @@ import { SlBasket } from "react-icons/sl";
 function GroupDetail() {
   const { groupID } = useParams();
   const [group, setGroup] = useState(null);
-  const [members, setMembers] = useState([]); 
+  const [members, setMembers] = useState([]);
   const [isPending, setIsPending] = useState(false);
   const [items, setItems] = useState([]);
   const [inputValue, setInputValue] = useState("");
@@ -26,12 +24,10 @@ function GroupDetail() {
             },
           }
         );
-        console.log("API Response:", response.data);
-
         let resGroup = response.data.find((val) => val._id === groupID);
         if (resGroup) {
           setGroup(resGroup);
-          setMembers(resGroup.members); 
+          setMembers(resGroup.members);
         } else {
           console.error("Group not found for ID:", groupID);
         }
@@ -59,7 +55,7 @@ function GroupDetail() {
           },
         }
       );
-      setItems((prevItems) => [...prevItems, response.data.item]); 
+      setItems((prevItems) => [...prevItems, response.data.item]);
     } catch (error) {
       console.error(error);
     } finally {
@@ -68,7 +64,7 @@ function GroupDetail() {
   };
 
   const delItem = async (id) => {
-    setIsPending(true); 
+    setIsPending(true);
     try {
       const res = await axios.delete(
         `https://nt-shopping-list.onrender.com/api/items/${id}`,
@@ -91,148 +87,70 @@ function GroupDetail() {
 
   return (
     <div>
-      <Box
-        sx={{
-          display: "flex",
-          flexDirection: "column",
-          alignItems: "center",
-          padding: "20px",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          maxWidth: "400px",
-          margin: "20px auto",
-          backgroundColor: "#f9f9f9",
-          boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-        }}
-      >
-        <Typography variant="h4" component="h2" sx={{ marginBottom: "10px" }}>
-          {group?.name}
-        </Typography>
-        <Box sx={{ textAlign: "center", marginBottom: "20px" }}>
-          <Typography variant="body1">
-            <strong>Owner:</strong> {group?.owner?.username}
-          </Typography>
-        </Box>
-        <Box sx={{ display: "flex", gap: "10px" }}>
-          <Button variant="contained" color="primary">
-            Add Member
-          </Button>
-          <Button variant="outlined" color="secondary">
-            Leave Group
-          </Button>
-        </Box>
-      </Box>
-      <div style={{ display: "flex", margin: "20px", gap: "20px" }}>
-        <div
-          style={{
-            flex: 1,
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "10px",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-            color: "black",
-            width: "600px",
-          }}
-          className="items_wrap"
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <h3 style={{ display: "flex", gap: "10px" }}>
-              Items{" "}
-              <span
-                style={{
-                  display: "flex",
-                  fontWeight: "bold",
-                  backgroundColor: "blue",
-                  color: "white",
-                  fontSize: "18px",
-                  padding: "5px 10px",
-                  borderRadius: "5px",
-                }}
-              >
+      <div className="flex items-center p-5 justify-between text-whiter">
+        <h2 className="text-2xl font-bold mb-2 text-white">{group?.name}</h2>
+        <div className="flex gap-4 items-center">
+          <div className="text-center py-2.5 px-2 rounded-xl bg-white">
+            <p className=" text-black">
+              <strong className="text-black">Owner: </strong>
+              {group?.owner?.username}
+            </p>
+          </div>
+          <select className="flex gap-3 py-2.5 px-2 rounded-xl outline-none">
+            <option className="text-black px-4 py-3 rounded-sm">
+              Add Member
+            </option>
+            <option className="text-black px-4 py-3 rounded-sm">
+              Leave Group
+            </option>
+          </select>
+        </div>
+      </div>
+
+      <div className="flex gap-5 m-5">
+        <div className="flex-1 bg-white p-5 rounded-lg shadow-md">
+          <div className="flex justify-between w-[755px] items-center">
+            <h3 className="flex items-center gap-2 text-xl font-semibold">
+              Items
+              <span className="bg-blue-500 text-white font-bold text-lg px-3 py-1 rounded-md">
                 {items.length}
               </span>
             </h3>
-            <form
-              style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              onSubmit={createItem}
-            >
+            <form className="flex items-center gap-2" onSubmit={createItem}>
               <input
                 type="text"
                 placeholder="Title"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                style={{
-                  padding: "8px",
-                  borderRadius: "5px",
-                  border: "1px solid #ddd",
-                  outline: "none",
-                }}
+                className="px-3 py-2 border border-gray-300 rounded-md outline-none"
               />
               <button
                 type="submit"
-                style={{
-                  backgroundColor: "blue",
-                  color: "white",
-                  border: "none",
-                  padding: "8px 12px",
-                  borderRadius: "5px",
-                  cursor: "pointer",
-                  fontWeight: "bold",
-                }}
+                className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition duration-300"
               >
-                {isPending ? (
-                  "..."
-                ) : (
-                  <FiPlus style={{ color: "white", fontSize: "20px" }} />
-                )}
+                {isPending ? "..." : <FiPlus className="text-white text-xl" />}
               </button>
             </form>
           </div>
 
-          <div className="items" style={{ marginTop: "20px" }}>
+          <div className="mt-5">
             {items.map((item) => (
               <div
                 key={item._id}
-                style={{
-                  display: "flex",
-                  justifyContent: "space-between",
-                  alignItems: "center",
-                  padding: "10px",
-                  borderRadius: "5px",
-                  marginBottom: "10px",
-                  border: "1px solid #ccc",
-                }}
+                className="flex justify-between items-center p-3 rounded-md border border-gray-200 mb-3"
               >
-                <p>{item.title}</p>
-                <div style={{ display: "flex", gap: "10px" }}>
+                <p className="text-gray-700">{item.title}</p>
+                <div className="flex gap-2">
                   <button
-                    style={{
-                      backgroundColor: item.isBought ? "green" : "gray",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
+                    className={`px-3 py-2 rounded-md text-white ${
+                      item.isBought ? "bg-green-500" : "bg-gray-500"
+                    } hover:bg-green-600 transition duration-300`}
                   >
                     <SlBasket />
                   </button>
                   <button
                     onClick={() => delItem(item._id)}
-                    style={{
-                      backgroundColor: "red",
-                      color: "white",
-                      border: "none",
-                      padding: "6px 12px",
-                      borderRadius: "5px",
-                      cursor: "pointer",
-                    }}
+                    className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition duration-300"
                   >
                     {isPending ? "..." : <AiOutlineClose />}
                   </button>
@@ -241,34 +159,14 @@ function GroupDetail() {
             ))}
           </div>
         </div>
-
-        <div
-          style={{
-            flex: 1,
-            backgroundColor: "white",
-            padding: "20px",
-            borderRadius: "10px",
-            boxShadow: "0 4px 8px rgba(0,0,0,0.2)",
-            color: "black",
-          }}
-          className="members_wrap"
-        >
-          <h3>
-            Members <span style={{ fontWeight: "bold" }}>{members.length}</span>
+        <div className="flex-1 bg-white w-[735px]  p-5 rounded-lg shadow-md">
+          <h3 className="text-xl font-semibold">
+            Members <span className="font-bold">{members.length}</span>
           </h3>
-          <div className="members" style={{ marginTop: "20px" }}>
+          <div className="mt-5">
             {members.map((member) => (
-              <div
-                key={member._id}
-                style={{
-                  padding: "10px",
-                  borderRadius: "5px",
-                  backgroundColor: "rgba(255, 255, 255, 0.1)",
-                  marginBottom: "10px",
-                  width: "800px",
-                }}
-              >
-                <p>{member.name}</p>
+              <div key={member._id} className="p-3 rounded-md bg-gray-50 mb-3">
+                <p className="text-gray-700">{member.name}</p>
               </div>
             ))}
           </div>

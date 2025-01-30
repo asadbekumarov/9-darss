@@ -2,10 +2,9 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { NavLink } from "react-router-dom";
 import { toast } from "react-toastify";
-import "./style.css";
 import { IoPerson } from "react-icons/io5";
 
-function sidebar() {
+function Sidebar() {
   const [groups, setGroups] = useState([]);
   const [isCreating, setIsCreating] = useState(false);
 
@@ -56,45 +55,52 @@ function sidebar() {
   };
 
   return (
-    <div className="sidebar-container">
-      <div className="sidebar-header">
-        <NavLink to={"/main"} className="sidebar-profile-link">
-          <IoPerson className="person" />
+    <div className="w-[300px] min-w-[300px] max-w-[300px] h-screen bg-gray-100 border-r border-gray-300 font-sans flex flex-col p-2.5 overflow-y-auto">
+      <div className="mb-5">
+        <NavLink
+          to={"/main"}
+          className="flex items-center text-xl text-black p-2.5"
+        >
+          <IoPerson className="text-blue-500" />
           Profile
         </NavLink>
       </div>
 
-      <div className="sidebar-content">
+      <div className="flex flex-col">
         <button
-          className="create-group-toggle-btn"
+          className="bg-green-500 text-white rounded-md text-base mb-5 py-2 transition duration-300 hover:bg-green-600"
           onClick={() => setIsCreating(!isCreating)}
         >
           {isCreating ? "Groups" : "+ Create Group"}
         </button>
 
         {isCreating && (
-          <form className="create-group-form" onSubmit={onCreateGroup}>
+          <form
+            className="w-full flex flex-col gap-2.5 mb-5"
+            onSubmit={onCreateGroup}
+          >
             <input
               type="text"
               placeholder="Group name"
-              className="form-input"
+              className="p-2.5 border border-gray-300 rounded-md text-base w-full"
               required
-              style={{ color: "black" }}
             />
             <input
               type="password"
               placeholder="Password"
-              className="form-input"
+              className="p-2.5 border border-gray-300 rounded-md text-base w-full"
               required
-              style={{ color: "black" }}
             />
-            <div className="form-actions">
-              <button type="submit" className="form-submit-btn">
+            <div className="flex gap-2.5">
+              <button
+                type="submit"
+                className="bg-blue-500 text-white p-2.5 rounded-md transition duration-300 hover:bg-blue-600"
+              >
                 Create
               </button>
               <button
                 type="button"
-                className="form-cancel-btn"
+                className="bg-red-500 text-white p-2.5 rounded-md transition duration-300 hover:bg-red-700"
                 onClick={() => setIsCreating(false)}
               >
                 Cancel
@@ -103,12 +109,12 @@ function sidebar() {
           </form>
         )}
 
-        <div className="group-list">
+        <div className="w-full">
           {groups.map((group) => (
             <NavLink
               key={group._id}
               to={`/main/groups/${group._id}`}
-              className="group-link"
+              className="block p-2.5 bg-white border border-gray-300 rounded-md mb-2.5 text-base transition duration-300 hover:bg-gray-100 hover:border-gray-400 text-black"
             >
               {group.name}
             </NavLink>
@@ -119,4 +125,4 @@ function sidebar() {
   );
 }
 
-export default sidebar;
+export default Sidebar;
