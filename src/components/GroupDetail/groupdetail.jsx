@@ -15,7 +15,6 @@ function GroupDetail() {
   const [group, setGroup] = useState(null);
   const [items, setItems] = useState([]); // Guruhdagi elementlar ro'yxati
   const [members, setMembers] = useState([]); // Guruh a'zolari ro'yxati
-  // const [isPending, setIsPending] = useState(false); // Yuklash holati (loading)
   const [me, setMe] = useState(null); // Foydalanuvchi ma'lumotlari
   const [bought, setBought] = useState(false); // Element sotib olinganligini tekshirish
   const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false); // Modal oynasini ochip yopish
@@ -171,10 +170,7 @@ function GroupDetail() {
         prevMembers.filter((member) => member._id !== memberId)
       );
     } catch (error) {
-      console.error(
-        "xato:",
-        error.response?.data || error.message
-      );
+      console.error("xato:", error.response?.data || error.message);
     }
   };
 
@@ -206,7 +202,7 @@ function GroupDetail() {
         </div>
       </div>
 
-     {/* Elementlar va A'zolar */}
+      {/* Elementlar va A'zolar */}
       <div className="mx-auto mt-6 flex gap-6">
         {isAddMemberModalOpen && (
           <ModalAddMember
@@ -235,9 +231,7 @@ function GroupDetail() {
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              >
-                {isPending ? "..." : <FiPlus className="text-xl" />}
-              </button>
+              >+</button>
             </form>
           </div>
 
@@ -262,7 +256,7 @@ function GroupDetail() {
                       onClick={() => delItem(item._id)}
                       className="bg-red-500 text-white px-3 py-2 rounded-md hover:bg-red-600 transition duration-300"
                     >
-                      {isPending ? "..." : <AiOutlineClose />}
+                      Del
                     </button>
                   )}
                 </div>
