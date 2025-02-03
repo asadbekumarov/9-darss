@@ -5,7 +5,6 @@ function ModalAddMember({ groupId, setIsAddMemberModalOpen, setMembers }) {
   const [searchQuery, setSearchQuery] = useState("");
   const [searchResults, setSearchResults] = useState([]);
 
-  // search
   const handleSearch = async (query) => {
     setSearchQuery(query);
     if (query.trim() === "") {
@@ -27,7 +26,6 @@ function ModalAddMember({ groupId, setIsAddMemberModalOpen, setMembers }) {
     }
   };
 
-  // Azo qo'shish
   const addMember = async (userId) => {
     if (!groupId || !userId) {
       console.error("Group ID or User ID is undefined");
@@ -53,7 +51,7 @@ function ModalAddMember({ groupId, setIsAddMemberModalOpen, setMembers }) {
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="bg-white w-[1200px] p-6 rounded-lg shadow-lg w-96">
+      <div className="bg-white p-6 rounded-lg shadow-lg w-96">
         <div className="flex justify-between items-center">
           <h1 className="text-xl font-bold mb-4">Add Member</h1>
           <button

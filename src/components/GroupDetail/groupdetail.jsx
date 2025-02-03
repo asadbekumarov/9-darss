@@ -6,24 +6,22 @@ import { AiOutlineClose } from "react-icons/ai";
 import ModalAddMember from "../modalAddMember/ModalAddMember";
 
 function GroupDetail() {
-  // Agar foydalanuvchi login qilmagan bo'lsa login sahifasiga otqazsin
   if (!localStorage.getItem("token")) {
     return <Navigate to={"/login"} />;
   }
 
   const { groupID } = useParams();
   const [group, setGroup] = useState(null);
-  const [items, setItems] = useState([]); // Guruhdagi elementlar ro'yxati
-  const [members, setMembers] = useState([]); // Guruh a'zolari ro'yxati
-  const [me, setMe] = useState(null); // Foydalanuvchi ma'lumotlari
-  const [bought, setBought] = useState(false); // Element sotib olinganligini tekshirish
-  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false); // Modal oynasini ochip yopish
-  const [inputValue, setInputValue] = useState(""); // Input qiymati (yangi element qo'shish uchun)
+  const [items, setItems] = useState([]);
+  const [members, setMembers] = useState([]);
+  const [me, setMe] = useState(null);
+  const [bought, setBought] = useState(false);
+  const [isAddMemberModalOpen, setIsAddMemberModalOpen] = useState(false);
+  const [inputValue, setInputValue] = useState("");
 
   useEffect(() => {
     (async function () {
       try {
-        // Guruhlar listni  olish
         let response = await axios.get(
           "https://nt-shopping-list.onrender.com/api/groups",
           {
@@ -33,7 +31,6 @@ function GroupDetail() {
           }
         );
 
-        // Foydalanuvchi ma'lumotlarini olish
         let resMe = await axios.get(
           "https://nt-shopping-list.onrender.com/api/auth",
           {
@@ -43,30 +40,26 @@ function GroupDetail() {
           }
         );
 
-        // URLdan kelgan groupID bo'yicha guruhni topish
         let resGroup = response.data.find((val) => val._id === groupID);
         if (resGroup) {
-          setGroup(resGroup); // guruh ma'lumotlarini saqlash
-          setMe(resMe.data); // foydalanuvchi ma'lumotlarini saqlash
-          setItems(resGroup.items); // elementlarni saqlash
-          setMembers(resGroup.members); // azolarni saqlash
+          setGroup(resGroup);
+          setMe(resMe.data);
+          setItems(resGroup.items);
+          setMembers(resGroup.members);
         }
       } catch (error) {
-        console.error(error); // xatoni konsolga chiqarish
+        console.error(error);
       }
     })();
-  }, [groupID, bought]); // groupID yoki bought o'zgarganida qayta yuklash
+  }, [groupID, bought]);
 
-  // Yangi element qo'shish
   const createItem = async (e) => {
-    e.preventDefault(); // Formaning  refrewni to'xtatish
-    // setIsPending(true); // Yuklash holatini yoqish
-    const title = e.target[0].value; // Inputdan qiymatni olish
-    const groupId = groupID; // Guruh ID sini olish
-    const token = localStorage.getItem("token"); // Tokenni olish
+    e.preventDefault();
+    const title = e.target[0].value;
+    const groupId = groupID;
+    const token = localStorage.getItem("token");
 
     try {
-      // Yangi elementni serverga yuborish
       const response = await axios.post(
         "https://nt-shopping-list.onrender.com/api/items",
         { title, groupId },
@@ -77,18 +70,15 @@ function GroupDetail() {
           },
         }
       );
-      setItems((prevItems) => [...prevItems, response.data.item]); // Yangi elementni ro'yxatga qo'shish
-      setInputValue(""); // Inputni tozalash
+      setItems((prevItems) => [...prevItems, response.data.item]);
+      setInputValue("");
     } catch (error) {
-      console.error(error); // Xatolikni konsolga chiqarish
+      console.error(error);
     }
   };
 
-  // Elementni o'chirish
   const delItem = async (id) => {
-    // setIsPending(true); // Yuklash holatini yoqish
     try {
-      // Elementni serverdan o'chirish
       const res = await axios.delete(
         `https://nt-shopping-list.onrender.com/api/items/${id}`,
         {
@@ -99,14 +89,13 @@ function GroupDetail() {
         }
       );
       if (res.status === 200) {
-        setItems((prevItems) => prevItems.filter((val) => val._id !== id)); // O'chirilgan elementni ro'yxatdan olib tashlash
+        setItems((prevItems) => prevItems.filter((val) => val._id !== id));
       }
     } catch (error) {
-      console.error(error); // Xatolikni konsolga chiqarish
+      console.error(error);
     }
   };
 
-  // Elementni sotib olingan deb belgilash
   const asBought = async (itemId) => {
     try {
       let res = await axios.post(
@@ -118,13 +107,12 @@ function GroupDetail() {
           },
         }
       );
-      setBought(!bought); // Holatni yangilash
+      setBought(!bought);
     } catch (error) {
-      console.error(error); // Xatolikni konsolga chiqarish
+      console.error(error);
     }
   };
 
-  // Elementni sotib olinmagan deb belgilash
   const asNotBought = async (itemId) => {
     try {
       let res = await axios.delete(
@@ -135,13 +123,12 @@ function GroupDetail() {
           },
         }
       );
-      setBought(!bought); // Holatni yangilash
+      setBought(!bought);
     } catch (error) {
       console.error(error);
     }
   };
 
-  // A'zoni guruhdan o'chirish
   const removeMember = async (groupId, memberId) => {
     if (!groupId || !memberId) {
       console.log("xato");
@@ -155,7 +142,6 @@ function GroupDetail() {
     }
 
     try {
-      // Azoni guruhdan o'chirish
       const response = await axios.delete(
         `https://nt-shopping-list.onrender.com/api/groups/${groupId}/members/${memberId}`,
         {
@@ -165,10 +151,26 @@ function GroupDetail() {
         }
       );
       console.log("Member removed:", response.data);
-      // Azoni ro'yxatdan olib tashlash
       setMembers((prevMembers) =>
         prevMembers.filter((member) => member._id !== memberId)
       );
+    } catch (error) {
+      console.error("xato:", error.response?.data || error.message);
+    }
+  };
+
+  const LeaveGroup = async () => {
+    try {
+      let res = await axios.post(
+        `https://nt-shopping-list.onrender.com/api/groups/${groupID}/leave`,
+        {},
+        {
+          headers: {
+            "x-auth-token": localStorage.getItem("token"),
+          },
+        }
+      );
+      console.log("Group left:", res);
     } catch (error) {
       console.error("xato:", error.response?.data || error.message);
     }
@@ -190,19 +192,20 @@ function GroupDetail() {
               className="px-4 py-2 rounded-lg bg-gray-200 outline-none"
               onChange={(e) => {
                 if (e.target.value === "Add Member") {
-                  setIsAddMemberModalOpen(true); // Modal oynasini ochish
+                  setIsAddMemberModalOpen(true);
+                } else if (e.target.value === "Leave Group") {
+                  LeaveGroup();
                 }
               }}
             >
               <option value="">Select an option</option>
               <option value="Add Member">Add Member</option>
-              <option>Leave Group</option>
+              <option value="Leave Group">Leave Group</option>
             </select>
           </div>
         </div>
       </div>
 
-      {/* Elementlar va A'zolar */}
       <div className="mx-auto mt-6 flex gap-6">
         {isAddMemberModalOpen && (
           <ModalAddMember
@@ -211,7 +214,6 @@ function GroupDetail() {
             setMembers={setMembers}
           />
         )}
-        {/* Elementlar ro'yxati */}
         <div className="flex-1 bg-white w-[755px] p-6 rounded-lg shadow-md">
           <div className="flex justify-between items-center">
             <h3 className="text-xl font-semibold text-gray-800">
@@ -231,7 +233,9 @@ function GroupDetail() {
               <button
                 type="submit"
                 className="bg-blue-500 text-white px-3 py-2 rounded-md hover:bg-blue-600 transition duration-300"
-              >+</button>
+              >
+                +
+              </button>
             </form>
           </div>
 
@@ -265,7 +269,6 @@ function GroupDetail() {
           </div>
         </div>
 
-        {/* Azolar ro'yxati */}
         <div className="flex-1 bg-white p-6 rounded-lg shadow-md">
           <h3 className="text-xl font-semibold text-gray-800">
             Members{" "}
